@@ -8,7 +8,7 @@ const main = async () => {
         "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
         deployer
     )
-    const a = await autoUpdating.getLatestStats()
+    //const a = await autoUpdating.getLatestStats()
     // console.log(
     //     `Temperature : ${temperature.toString()}       Humidity :${humidity.toString()}       Moisture :${moisture.toString()}`
     // )
