@@ -27,17 +27,19 @@ contract AutoUpdating is VRFConsumerBaseV2, KeeperCompatible {
     //contract state variables
     address private immutable i_owner;
     uint256 private immutable i_interval;
+
     struct IotStats {
         uint256 temperature;
         uint256 humidity;
         uint256 airQuality;
-        uint256 updatedAt;
     }
+    uint256 private s_lastTimeStamp;
     IotStats[] private s_iotStatsArray;
     ContractState private s_contractState;
 
     //events
     event IotStatsUpdated(uint256 indexed updatedTime);
+    event RequestIdReceived(uint256 indexed requestId);
 
     constructor(
         address vrfCoordinator,
@@ -52,6 +54,7 @@ contract AutoUpdating is VRFConsumerBaseV2, KeeperCompatible {
         i_gasLane = _gasLane;
         i_callbackGasLimit = _callbackGasLimit;
         i_interval = _interval;
+        s_lastTimeStamp = block.timestamp;
     }
 
     modifier onlyOwner() {
@@ -65,19 +68,18 @@ contract AutoUpdating is VRFConsumerBaseV2, KeeperCompatible {
         bytes memory /* checkData */
     )
         public
-        view
         override
         returns (
             bool upkeepNeeded,
             bytes memory /* performData */
         )
     {
-        bool isNotUpdating = ContractState.NOTUPDATING == s_contractState;
-        bool timePassed = (block.timestamp - getLatestUpdatedTimestamp() >
-            i_interval);
-        bool hasBalance = address(this).balance > 0;
+        //bool isNotUpdating = (ContractState.NOTUPDATING == s_contractState);
+        bool timePassed = ((block.timestamp - s_lastTimeStamp) > i_interval);
+        //bool hasBalance = address(this).balance > 0;
 
-        upkeepNeeded = (isNotUpdating && timePassed && hasBalance);
+        upkeepNeeded = (timePassed);
+        return (upkeepNeeded, "0x0");
     }
 
     function performUpkeep(
@@ -95,18 +97,18 @@ contract AutoUpdating is VRFConsumerBaseV2, KeeperCompatible {
             i_callbackGasLimit,
             NUMWORDS
         );
+        emit RequestIdReceived(requestId);
     }
 
     function fulfillRandomWords(
         uint256, /*requestId */
         uint256[] memory randomWords
     ) internal override {
-        uint256 _temperature = randomWords[0] % 3;
-        uint256 _humidity = randomWords[1] % 3;
-        uint256 _airQuality = randomWords[2] % 3;
-        s_iotStatsArray.push(
-            IotStats(_temperature, _humidity, _airQuality, block.timestamp)
-        );
+        uint256 _temperature = randomWords[0];
+        uint256 _humidity = randomWords[1];
+        uint256 _airQuality = randomWords[2];
+        s_iotStatsArray.push(IotStats(_temperature, _humidity, _airQuality));
+        s_lastTimeStamp = block.timestamp;
         emit IotStatsUpdated(block.timestamp);
     }
 
@@ -137,7 +139,15 @@ contract AutoUpdating is VRFConsumerBaseV2, KeeperCompatible {
         return i_owner;
     }
 
-    function getLatestUpdatedTimestamp() public view returns (uint256) {
-        return s_iotStatsArray[getIotStatsArrayLength() - 1].updatedAt;
+    function getLastTimestamp() public view returns (uint256) {
+        return s_lastTimeStamp;
+    }
+
+    function getContractState() public view returns (ContractState) {
+        return s_contractState;
+    }
+
+    function getInterval() public view returns (uint256) {
+        return i_interval;
     }
 }

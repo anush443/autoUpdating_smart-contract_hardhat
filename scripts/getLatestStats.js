@@ -5,10 +5,10 @@ const main = async () => {
 
     const autoUpdating = await ethers.getContractAt(
         "AutoUpdating",
-        "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+        "0x7c4F4231691787DAeF03F871F7E180c4023D7926",
         deployer
     )
-    //const a = await autoUpdating.getLatestStats()
+    const a = await autoUpdating.getOwner()
     // console.log(
     //     `Temperature : ${temperature.toString()}       Humidity :${humidity.toString()}       Moisture :${moisture.toString()}`
     // )

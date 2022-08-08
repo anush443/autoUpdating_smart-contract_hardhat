@@ -18,7 +18,7 @@ module.exports = async function ({ getNamedAccounts, developments }) {
         vrfCoordinatorV2Address = networkConfig[chainId]["vrfCoordinatorV2"]
         subscriptionId = networkConfig[chainId]["subscriptionId"]
     }
-    const entranceFee = networkConfig[chainId]["entranceFee"]
+
     const gasLane = networkConfig[chainId]["gasLane"]
     const callbackGasLimit = networkConfig[chainId]["callbackGasLimit"]
     const interval = networkConfig[chainId]["interval"]
@@ -38,4 +38,4 @@ module.exports = async function ({ getNamedAccounts, developments }) {
 
     log("_____________________")
 }
-module.exports.tags = ["all", "lottery"]
+module.exports.tags = ["all", "autoUpdating"]

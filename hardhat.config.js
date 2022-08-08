@@ -1,27 +1,29 @@
-require("@nomiclabs/hardhat-waffle")
-require("@nomiclabs/hardhat-etherscan")
-require("hardhat-deploy")
-require("solidity-coverage")
-require("hardhat-gas-reporter")
-require("hardhat-contract-sizer")
 require("dotenv").config()
-require("mocha")
+require("@nomiclabs/hardhat-etherscan")
+require("@nomiclabs/hardhat-waffle")
+require("hardhat-gas-reporter")
+require("solidity-coverage")
+require("hardhat-deploy")
 
-/**
- * @type import('hardhat/config').HardhatUserConfig
- */
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || ""
-const RINKEBY_RPC_URL = process.env.RINKEBY_RPC_URL || ""
-const PRIVATE_KEY = process.env.PRIVATE_KEY || ""
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || ""
+// const KOVAN_RPC_URL =
+//     process.env.KOVAN_RPC_URL ||
+//     "https://eth-mainnet.alchemyapi.io/v2/your-api-key"
+const RINKEBY_RPC_URL =
+    process.env.RINKEBY_RPC_URL ||
+    "https://eth-rinkeby.alchemyapi.io/v2/LnMii3GfLzYj6B20vHDtRwiJhIY1OcHz"
+const PRIVATE_KEY =
+    process.env.PRIVATE_KEY || "0x11ee3108a03081fe260ecdc106554d09d9d1209bcafd46942b10e02943effc4a"
+//const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || ""
 
 module.exports = {
-    solidity: "0.8.8",
+    solidity: {
+        compilers: [{ version: "0.8.8" }, { version: "0.6.6" }],
+    },
     defaultNetwork: "hardhat",
     networks: {
         hardhat: {
             chainId: 31337,
-            blockConfirmations: 1,
             // gasPrice: 130000000000,
         },
         // kovan: {
@@ -38,11 +40,11 @@ module.exports = {
         },
     },
     gasReporter: {
-        enabled: false,
+        enabled: true,
         currency: "USD",
         outputFile: "gas-report.txt",
         noColors: true,
-        // coinmarketcap: COINMARKETCAP_API_KEY,
+        coinmarketcap: COINMARKETCAP_API_KEY,
     },
     etherscan: {
         apiKey: process.env.ETHERSCAN_API_KEY,
@@ -50,12 +52,7 @@ module.exports = {
     namedAccounts: {
         deployer: {
             default: 0,
+            1: 0,
         },
-        player: {
-            default: 1,
-        },
-    },
-    mocha: {
-        timeout: 200000, // 500 seconds max for running tests
     },
 }
