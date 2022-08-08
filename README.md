@@ -1,0 +1,3 @@
+# hardhat_autoUpdating_smart-contract
+Contracts that updates itself using chainlink keepers
+contract address 0x300dFB14F84d41df3D5373F7AB5854038937a1af
